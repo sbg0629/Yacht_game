@@ -68,17 +68,30 @@ def total_scores(item,values):
     return 0  #아무것도 해당 안되면 0점
 #-------------------------------점수-----------------------------------------------------
 
+#주사위 굴리기
 def roll_dice():
     global dice_values #함수 안에 전역변수 수정
-    dice_values = [random.randint(1,6) for _ in range(5)] 
-    # ㄴ리스트 컴프리헨션 문법 변수 이름을 _ 해서 값을 쓰지 않지만 5번 반복 
-    update_labels() #화면 ui에 변수 갱신 없으면 안 보여짐
-    score_label.config(text="합계: " + str(sum(dice_values))) #합계 계산해서 점수 라벨에 표시
-    # ㄴ config은 tkinter의 위젯은 생성후 속성을 바꿀 수 있는 함수 가지고 있음
-
+    if current_player ==1: # 플레이어 인 경우
+        for i in range(5): #5개 주사위
+            if not hold_vars[i].get(): #해당 주사위를 고정하지 않은 경우  
+                dice_values[i] = random.randint(1,6) #1~6까지 랜덤 숫자 새로고침
+    else: # 컴퓨터인 경 우
+        for i in range(5): #주사위를 모두 새로 굴림
+            dice_values[i] = random.randint(1,6) 
+    update_labels() # 라벨 업데이트
+    update_score_button() #굴린 값을 버튼 점수에 업데이트
+    rool_count+=1  #주사위 굴린 횟수 1 증가
+    roll_button.config(text="굴리기 (" + str(max_rolls - roll_count) + "번 남음)") #남은 횟수
+    if rool_count >= max_rools: # 굴린 횟수가 최대 넘어가면 
+        roll_button.config(state="disabled") # 버튼 비활성화
+# 주사위 표시 업데이트 하기 
 def update_labels():
     for i in range(5):
-        dice_labels[i].config(text=str(dice_values[i]))
+         dice_labels[i].config(image=dice_images[dice_values[i] - 1], text="") #해당 주사위 이미지 확인
+    else:
+            dice_labels[i].config(image="", text="-") # 아직 주사위 안 굴렸을 땐 -표시
+#======================================================================================
+
 
 #윈도우 기본 설정
 
